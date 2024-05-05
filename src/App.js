@@ -9,29 +9,36 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth } from './firebase-config';
 function App() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(localStorage.getItem("isAuth"));
 
   const signUserOut = () => {
     signOut(auth).then(() => {
-      localStorage.clear()
-      setIsAuth(false)
-      window.location.pathname = "/login"
-    })
-  }
+      localStorage.clear();
+      setIsAuth(false);
+      window.location.pathname = "/login";
+    });
+  };
+
   return (
     <Router>
       <nav>
-        <Link to="/">Home</Link>
-        {isAuth && <Link to="/createpost">Create</Link>}
-        {!isAuth ? (<Link to="/login">Login</Link>) : (<button onClick={signUserOut}>Logout</button>)}
+        <Link to="/"> Home </Link>
+
+        {!isAuth ? (
+          <Link to="/login"> Login </Link>
+        ) : (
+          <>
+            <Link to="/createpost"> Create Post </Link>
+            <button onClick={signUserOut}> Log Out</button>
+          </>
+        )}
       </nav>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/createpost" element={<CreatePost isAuth={isAuth}/>} />
-        <Route path="/login" element={<Login setIsAuth={setIsAuth}/>} />
+        <Route path="/" element={<Home isAuth={isAuth} />} />
+        <Route path="/createpost" element={<CreatePost isAuth={isAuth} />} />
+        <Route path="/login" element={<Login setIsAuth={setIsAuth} />} />
       </Routes>
     </Router>
   );
 }
-
 export default App;

@@ -1,44 +1,57 @@
-import React, {useState, useEffect} from "react";
-import {addDoc, collection} from 'firebase/firestore'
+import React, { useState, useEffect } from "react";
+import { addDoc, collection } from 'firebase/firestore'
 import { db, auth } from "../firebase-config";
 import { useNavigate } from "react-router-dom";
 
-function CreatePost({isAuth}) {
+function CreatePost({ isAuth }) {
 
     const [title, setTitle] = useState("");
     const [postText, setPostText] = useState("");
 
     const postsCollectionRef = collection(db, "posts");
-    const createPost = async () => {
-        await addDoc(postsCollectionRef, {title, postText, author: {name: auth.currentUser.displayName, id: auth.currentUser.uid}});
-        navigate("/");
-    }
-
     let navigate = useNavigate();
-    
+
+    const createPost = async () => {
+        await addDoc(postsCollectionRef, {
+            title,
+            postText,
+            author: { name: auth.currentUser.displayName, id: auth.currentUser.uid },
+        });
+        navigate("/");
+    };
 
     useEffect(() => {
-        if(!isAuth){
-            navigate("/login")
+        if (!isAuth) {
+            navigate("/login");
         }
     }, []);
-    return(
+
+    return (
         <div className="createPostPage">
-            {" "}
             <div className="cpContainer">
                 <h1>Create A Post</h1>
                 <div className="inputGp">
-                    <label>Title: </label>
-                    <input placeholder="Title..." onChange={(event) => {setTitle(event.target.value)}}/>
+                    <label> Title:</label>
+                    <input
+                        placeholder="Title..."
+                        onChange={(event) => {
+                            setTitle(event.target.value);
+                        }}
+                    />
                 </div>
                 <div className="inputGp">
-                    <label>Content: </label>
-                    <textarea placeholder="Some Text Here..." onChange={(event) => {setPostText(event.target.value)}}/>
+                    <label> Post:</label>
+                    <textarea
+                        placeholder="Post..."
+                        onChange={(event) => {
+                            setPostText(event.target.value);
+                        }}
+                    />
                 </div>
-                <button onClick={createPost}>Post</button>
+                <button onClick={createPost}> Submit Post</button>
             </div>
         </div>
-    )
+    );
 }
 
 export default CreatePost;
